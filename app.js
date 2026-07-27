@@ -159,7 +159,7 @@ let fontFamily =
    APP VERSION
    Change this on every release
 ========================= */
-const APP_VERSION = "3.2.7";
+const APP_VERSION = "3.2.8";
 
 const versionEl =
   document.getElementById(
@@ -854,6 +854,15 @@ function startReader() {
       firstH.includes("note") ||
       firstH.includes("endnote");
 
+    /* Detect if this page is a Table of Contents page —
+       links here should always navigate normally */
+    const isTocPage =
+      pageTitle.includes("content") ||
+      pageTitle.includes("toc") ||
+      firstH.includes("content") ||
+      firstH.includes("table of contents") ||
+      doc.querySelector('nav[epub\\:type="toc"]') !== null;
+
     /* Disable text selection in iframe —
        browser menu won't appear at all */
     const noSelStyle =
@@ -967,6 +976,13 @@ function startReader() {
 
       const href = anchor.getAttribute("href") || "";
 
+      /* On a Table of Contents page, all links should
+         navigate normally — never show a footnote popup */
+      if (isTocPage) {
+        rendition.display(href).catch(err => console.error(err));
+        return;
+      }
+
       const epubType = anchor.getAttribute("epub:type") || "";
       const role = anchor.getAttribute("role") || "";
 
@@ -996,9 +1012,11 @@ function startReader() {
         return;
       }
 
-      /* Cross-file fragment — if on notes page navigate back, else popup */
+      /* Cross-file fragment — ONLY treat as footnote if it's an
+         explicit note reference. Otherwise it's normal navigation
+         (e.g. TOC link to "chapter2.xhtml#section-b") */
       if (href.includes("#")) {
-        if (isNotesPage) {
+        if (isNotesPage || !isNote) {
           rendition.display(href).catch(err => console.error(err));
           return;
         }
