@@ -657,6 +657,16 @@ body.sepia #readingInfo { color: rgba(100, 60, 20, 0.5); }
   display: block;
 }
 
+.tocItem.active {
+  background: rgba(149, 100, 51, 0.12);
+  border-radius: 6px;
+}
+
+.tocItem.active a {
+  color: #956433;
+  font-weight: 700;
+}
+
 /* =========================
    SIDEBAR TABS
 ========================= */
