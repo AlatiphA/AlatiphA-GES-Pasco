@@ -103,7 +103,7 @@
     </div>
 
     <!-- MoMo Support Section -->
-    <div class="momoSection">
+    <div class="momoSection" id="momoSection">
 
       <div class="momoTitle">
         <i class="fa-solid fa-heart"></i> Support AlatiphA
@@ -135,6 +135,16 @@
 
       </div>
 
+      <button class="supporterKeyLink" id="supporterKeyLink">
+        Already supported? Enter your key
+      </button>
+
+    </div>
+
+    <!-- SUPPORTER THANK YOU (shown after valid key) -->
+    <div class="supporterThanks" id="supporterThanks" style="display:none">
+      <i class="fa-solid fa-circle-check"></i>
+      <span>Thank you for supporting AlatiphA!</span>
     </div>
 
     <!-- About --> 
@@ -337,6 +347,25 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+
+<!-- SUPPORTER KEY MODAL -->
+<div id="supporterKeyModal" class="supporterKeyModal">
+  <div class="supporterKeyBox">
+    <div class="supporterKeyHeader">
+      <span>Enter Supporter Key</span>
+      <button id="supporterKeyClose" aria-label="Close">✕</button>
+    </div>
+    <input
+      type="text"
+      id="supporterKeyInput"
+      placeholder="e.g. ALATIPHA-XXXX-XXXX"
+      autocomplete="off"
+      autocapitalize="characters"
+    />
+    <button id="supporterKeySubmit">Activate</button>
+    <p id="supporterKeyError" class="supporterKeyError"></p>
+  </div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/epubjs/dist/epub.min.js"></script>
 

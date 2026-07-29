@@ -159,7 +159,7 @@ let fontFamily =
    APP VERSION
    Change this on every release
 ========================= */
-const APP_VERSION = "3.3.1";
+const APP_VERSION = "3.4.1";
 
 const versionEl =
   document.getElementById(
@@ -171,6 +171,89 @@ if (versionEl)
 
 const READER_DATA_KEY =
   "ges-pasco-data";
+
+/* =========================
+   SUPPORTER KEY SYSTEM
+   ─────────────────────────
+   Keys follow format: ALATIPHA-XXXX-YYYY
+   where YYYY is a checksum derived from XXXX.
+   This is a soft gate, not real security —
+   anyone viewing source can find the algorithm.
+   It's meant to reward genuine supporters, not
+   stop determined bypassing.
+========================= */
+
+function supporterChecksum(code) {
+  let sum = 0;
+  for (let i = 0; i < code.length; i++) {
+    sum += code.charCodeAt(i) * (i + 7);
+  }
+  return (sum % 9973).toString(36).toUpperCase().padStart(4, "0");
+}
+
+function isValidSupporterKey(key) {
+  const clean = key.trim().toUpperCase();
+  const match = clean.match(/^ALATIPHA-([A-Z0-9]{4,8})-([A-Z0-9]{4})$/);
+  if (!match) return false;
+  const [, code, checksum] = match;
+  return supporterChecksum(code) === checksum;
+}
+
+function isSupporter() {
+  return localStorage.getItem("isSupporter") === "true";
+}
+
+function applySupporterUI() {
+  const momoSection = document.getElementById("momoSection");
+  const thanks = document.getElementById("supporterThanks");
+  if (!momoSection || !thanks) return;
+
+  if (isSupporter()) {
+    momoSection.style.display = "none";
+    thanks.style.display = "flex";
+  } else {
+    momoSection.style.display = "block";
+    thanks.style.display = "none";
+  }
+}
+
+const supporterKeyModal = document.getElementById("supporterKeyModal");
+const supporterKeyLink = document.getElementById("supporterKeyLink");
+const supporterKeyClose = document.getElementById("supporterKeyClose");
+const supporterKeyInput = document.getElementById("supporterKeyInput");
+const supporterKeySubmit = document.getElementById("supporterKeySubmit");
+const supporterKeyError = document.getElementById("supporterKeyError");
+
+if (supporterKeyLink) {
+  supporterKeyLink.addEventListener("click", () => {
+    supporterKeyModal.classList.add("open");
+    supporterKeyError.textContent = "";
+    supporterKeyInput.value = "";
+    supporterKeyInput.focus();
+  });
+}
+
+if (supporterKeyClose) {
+  supporterKeyClose.addEventListener("click", () => {
+    supporterKeyModal.classList.remove("open");
+  });
+}
+
+if (supporterKeySubmit) {
+  supporterKeySubmit.addEventListener("click", () => {
+    const key = supporterKeyInput.value;
+    if (isValidSupporterKey(key)) {
+      localStorage.setItem("isSupporter", "true");
+      supporterKeyModal.classList.remove("open");
+      applySupporterUI();
+    } else {
+      supporterKeyError.textContent = "Invalid key. Please check and try again.";
+    }
+  });
+}
+
+/* Apply supporter UI on load */
+applySupporterUI();
 
 const BOOKMARKS_KEY =
   "ges-pasco-bookmarks";
